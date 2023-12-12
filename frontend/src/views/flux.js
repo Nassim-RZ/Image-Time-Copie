@@ -105,8 +105,8 @@ function Flux() {
   const firstLetter = name ? name.charAt(0).toUpperCase() : '';
 
   return (
-    <div className="d-flex justify-content-center clr-out vh-100">
-      <div className="total border border-2 clr-in">
+    <div className="d-flex justify-content-center">
+      <div className="total border border-2 ">
         <div className="header-disp d-flex align-items-center">
           <div className="rond"><div className="profile2">{firstLetter}</div></div>
           <label className="fw-bold fs-4" style={{ cursor: 'pointer' }} onClick={() => navigate(`/profile/${userId}`)}>{name}</label>
@@ -118,13 +118,15 @@ function Flux() {
               <div>
                 <p className="fw-bold fs-5">{userImage.userName}</p>
                 <p className="fw-lighter fs-6">Date: {new Date(userImage.latestImage.date).toLocaleString()}</p>
-                <img 
-                  onLoad={setEqualImageDimensions} 
-                  src={`http://localhost:3000${userImage.latestImage.image}`} 
-                  alt={`Image of ${userImage.userName}`} 
-                  onClick={() => setSelectedImage(userImage)}
-                  style={{ cursor: 'pointer' }} 
-                />
+                <div className="image-container2" >
+                  <img 
+                    className="image-container2-img"
+                    src={`http://localhost:3000${userImage.latestImage.image}`} 
+                    alt={`Image of ${userImage.userName}`} 
+                    onClick={() => setSelectedImage(userImage)}
+                    style={{ cursor: 'pointer' }} 
+                  />
+                </div>
                 {userImage.latestImage.description && (
                   <p>{isTruncated ? userImage.latestImage.description.slice(0, 100) : userImage.latestImage.description}
                     {userImage.latestImage.description.length > 100 && (
@@ -138,12 +140,12 @@ function Flux() {
                   <div>
                     <FontAwesomeIcon
                       icon={likedImages.includes(userImage.latestImage._id) ? solidHeart : farHeart}
-                      style={{ color: 'red', fontSize: '2em', cursor: 'pointer' }}
+                      style={{ color: 'red', fontSize: '2em', cursor: 'pointer', marginLeft: '1em', marginTop: '20px', marginBottom: '8px'}}
                       className="d-flex align-self-start"
                       onClick={() => handleLike(userImage.latestImage._id)}
                     />
                   </div> 
-                  <p style={{ marginLeft: '0.5em', marginBottom: '0.1em' }}>{userImage.latestImage.likes} Likes</p>
+                  <p style={{ marginLeft: '0.5em', marginBottom: '0.1em', marginTop: '20px' }}>{userImage.latestImage.likes} Likes</p>
                 </div>
               </div>
             </>
@@ -153,7 +155,9 @@ function Flux() {
           <Showing show={true} onClose={() => setSelectedImage(null)}>
             <p className="fw-bold fs-5">{selectedImage.userName}</p>
             <p className="fw-lighter fs-6">Date: {new Date(selectedImage.latestImage.date).toLocaleString()}</p>
-            <img src={`http://localhost:3000${selectedImage.latestImage.image}`} alt={`Image of ${selectedImage.userName}`} />
+            <div className="image-container">
+            <img className="image-container-img" src={`http://localhost:3000${selectedImage.latestImage.image}`} alt={`Image of ${selectedImage.userName}`} />
+            </div>
             <p className="fs-5">{selectedImage.latestImage.description}</p>
             <div>
               <FontAwesomeIcon
@@ -163,6 +167,7 @@ function Flux() {
               />
             </div>
             <p style={{ marginLeft: '0.5em', marginBottom: '0.1em' }}>{selectedImage.latestImage.likes} Likes</p>
+            <button onClick={() => setSelectedImage(null)} className="btn btn-outline-secondary mb-5 d4">Close</button>
          </Showing>
         )}
      </div>

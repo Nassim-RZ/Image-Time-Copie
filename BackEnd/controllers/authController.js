@@ -8,7 +8,7 @@ const dir = './public/uploads';
 
 if (!fs.existsSync(dir)){
     fs.mkdirSync(dir, { recursive: true });
-}
+};
 
 exports.login = (req, res, next) => {
     const { email, password } = req.body;
@@ -28,7 +28,7 @@ exports.login = (req, res, next) => {
         });
     })
     .catch(next);
-}
+};
 
 exports.register = (req, res, next) => {
     let data = { name, email, password, dateOfBirth, gender} = req.body;
@@ -45,7 +45,7 @@ if (!fs.existsSync(uploadDir)) {
     console.log(`Directory ${uploadDir} created successfully.`);
 } else {
     console.log(`The directory ${uploadDir} already exists.`);
-}
+};
 
 exports.profile = async (req, res, next) => {
 
@@ -122,9 +122,9 @@ exports.getLatestImages = async (req, res) => {
       console.error('Error fetching latest images:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
-  };
+};
   
-  exports.likeImage = async (req, res, next) => {
+exports.likeImage = async (req, res, next) => {
     const { imageId } = req.params;
     const userId = req._id;
   
@@ -147,9 +147,9 @@ exports.getLatestImages = async (req, res) => {
       console.error('Error liking image:', error);
       res.status(500).json({ success: false, message: 'Internal server error' });
     }
-  }
+};
   
-  exports.uploadAvatar = async (req, res, next) => {
+exports.uploadAvatar = async (req, res, next) => {
     try {
         const user = await User.findByIdAndUpdate(req._id, { avatar: `/uploads/${req.file.originalname}` });
         res.status(200).json({

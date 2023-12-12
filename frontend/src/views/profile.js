@@ -60,13 +60,22 @@ function Profile() {
             console.error('Error fetching images:', error);
         });
     }, [token]);
+
     const setEqualImageDimensions = (event) => {
         const targetImage = event.target;
         const imageSize = 100;
         targetImage.style.width = `${imageSize}%`;
         targetImage.style.height = `${imageSize}%`;
-      };
-      const handleUploadAvatar = async (event) => {
+    };
+
+    const setEqualImageDimensions2 = (event) => {
+        const targetImage = event.target;
+        const imageSize = 400;
+        targetImage.style.width = `${imageSize}px`;
+        targetImage.style.height = `auto`;
+    };
+
+    const handleUploadAvatar = async (event) => {
         try {
             console.log('Uploading avatar');
             const formData = new FormData();
@@ -135,10 +144,13 @@ const handleSave = async () => {
           console.error('Error deleting image:', error);
         }
       };
-  
+    
+      const handleClose = () => {
+        setShowModal(false);
+      }
     return (
-        <div className="d-flex justify-content-center clr-out vh-100">
-            <div className="total border border-2 clr-in">
+        <div className="d-flex justify-content-center  vh-100">
+            <div className="total border border-2 ">
                 <div className="divd">
                     <button type="edit" className="btn btn-outline-primary ms-2 mt-1" onClick={() => navigate('/flux')}>Flux</button>
                     <button type="edit" className="btn btn-outline-danger me-2 mt-1" onClick={handleLogout}>Logout</button>
@@ -155,6 +167,10 @@ const handleSave = async () => {
                         <div></div>
                         <Modal show={showModal} onClose={() => setShowModal(false)}>
                             <Adding />
+                            <div className="d5">
+                                <button onClick={handleClose} className="btn btn-outline-secondary mt-5 d5">Close</button>
+                            </div>
+                            
                         </Modal>
                         {!isEditing && (
                             <button
@@ -192,9 +208,18 @@ const handleSave = async () => {
                 </div>
                 {selectedImage && (
                     <Showing show={true} onClose={() => setSelectedImage(null)} userImage={selectedImage}>
-                        <img src={`http://localhost:3000${selectedImage.image}`} alt={`Image of ${selectedImage._id}`} /> 
-                        <p>{selectedImage.description}</p>
-                        <button onClick={() => handleDeleteImage(selectedImage._id)} className="btn btn-outline-danger me-2 d3 ">Delete</button>
+                        <div>
+                            <div className="image-container" >
+                                <img className="image-container-img"  src={`http://localhost:3000${selectedImage.image}`} alt={`Image of ${selectedImage._id}`}/>
+                            </div>
+                            <div className="pt-5">
+                                <p >{selectedImage.description}</p>
+                            </div>
+                        </div>
+                        <div className="pt-5">
+                            <button onClick={() => handleDeleteImage(selectedImage._id)} className="btn btn-outline-danger d3">Delete</button>
+                            <button onClick={() => setSelectedImage(null)} className="btn btn-outline-secondary me-2 d3">Close</button>
+                        </div>
                     </Showing>
                 )}
             </div>     

@@ -50,31 +50,25 @@ function Adding() {
         });
     }, [token]);
 
-    const handleCloseForm = () => {
-        setShowForm(false);
-      };
-      
-
     return (
-        <div className="">
-            <div className="d-flex  border border-2 clr-in">
-            {showForm && (
-  <div className=" ">
-    <label htmlFor="file-upload" className="custom-file-upload my-custom-button ">
-      Choose an image
-    </label>
-    <input id="file-upload" type="file" style={{display: "none"}} onChange={handleFileChange} />
-    {preview && <img src={preview} alt="Preview" style={{width: '100px', height: '100px'}} />}
-    <div class="form-floating">
-      <textarea onChange={handleDescriptionChange} class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{width: '50vh', height: '400px', boxSizing: 'border-box'}}/>
-      <label for="floatingTextarea2">Comments</label>
-    </div>
-    <button className="btn btn-secondary" onClick={handleUpload}>Upload Image</button>
-
-  </div>
-)}
-
-                    
+        <div>
+            <div className="d-flex border border-2 clr-in">
+                {showForm && (
+                    <div style={{ width: '100%', height: '450px', boxSizing: 'border-box', margin: 'auto', marginBottom: '100px', marginTop: '10px'}}>
+                        <label htmlFor="file-upload" className="custom-file-upload my-custom-button ">
+                        Choose an image
+                        </label>
+                        <input id="file-upload" type="file" style={{display: "none"}} onChange={handleFileChange} />
+                        {preview && <img src={preview} alt="Preview" style={{width: '100px', height: '100px'}} />}
+                        <div  className="form-floating pt-3" >
+                            <textarea onChange={handleDescriptionChange} class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{width: '100%', height: '400px', boxSizing: 'border-box'}}/>
+                            <label for="floatingTextarea2" >Comments</label>
+                        </div>
+                        <div>
+                        <button className="btn btn-secondary mt-3" onClick={handleUpload}>Upload Image</button>
+                        </div> 
+                    </div>
+                )}
             </div>
         </div>
     );
