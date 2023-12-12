@@ -61,6 +61,13 @@ New Terminal
 **Server:** Node, Express, MongoDB
 
 
+## Screenshots
+
+![Register](https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Register.png)
+
+![Flux](https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Flux.png)
+
+
 ## Contributing
 
 Contributions are always welcome!
