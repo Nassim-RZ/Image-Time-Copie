@@ -65,9 +65,9 @@ New Terminal
 
 <div style="display: flex;">
 
-  <img src="https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Register.png" alt="Register" width="40%" height="200px">
+  <img src="https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Register.png" alt="Register" width="40%" height="600px">
 
-  <img src="https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Flux.png" alt="Flux" width="40%" height="200px">
+  <img src="https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Flux.png" alt="Flux" width="40%" height="600px">
 
 </div>
 
