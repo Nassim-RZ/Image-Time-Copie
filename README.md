@@ -63,9 +63,13 @@ New Terminal
 
 ## Screenshots
 
-![Register](https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Register.png)
+<div style="display: flex;">
 
-![Flux](https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Flux.png)
+  <img src="https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Register.png" alt="Register" width="50%">
+
+  <img src="https://github.com/Nassim-RZ/Image-Time/blob/5845bb80212301db2c3c230836ccbb890dbef527/frontend/public/Flux.png" alt="Flux" width="50%">
+
+</div>
 
 
 ## Contributing
