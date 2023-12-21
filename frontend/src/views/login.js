@@ -14,6 +14,7 @@ function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    // Function to handle changes in input fields
     const handleChange = e => {
         const { name, value } = e.target;
         switch (name) {
@@ -29,6 +30,7 @@ function Login() {
         setError(''); 
       };
 
+    // Function to handle form submission
     const onSubmit = e => {
       e.preventDefault();
       let data = {
@@ -52,6 +54,7 @@ function Login() {
         });        
       }
 
+      // Function to navigate to the registration page
       const navigateToRegister = () => {
         navigate('/register');
       };

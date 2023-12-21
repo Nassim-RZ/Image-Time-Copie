@@ -1,42 +1,41 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart as farHeart, faHeart as solidHeart } from '@fortawesome/free-regular-svg-icons';
+import { useNavigate } from 'react-router-dom';
+import FluxHeader from './fluxHeader';
+import ImagePreview from './fluxImages';
 import Showing from "../components/Showing";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 
 function Flux() {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
+  const [userData, setUserData] = useState({ name: '', id: null });
   const [images, setImages] = useState([]);
   const [likedImages, setLikedImages] = useState([]);
-  const [userId, setUserId] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isTruncated, setIsTruncated] = useState(true);
   const token = localStorage.getItem('authToken');
 
+  // Fetch user data on component mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/auth/profile/${userId}`, {
+        const response = await axios.get(`http://localhost:3000/api/auth/profile/${userData.id}`, {
           headers: {
             'Authorization': token
           }
         });
-        setName(response.data.data.name);
-        setUserId(response.data.data.id);
+        setUserData({ name: response.data.data.name, id: response.data.data.id });
       } catch (error) {
         console.error('Error fetching user data:', error);
         navigate('/');
       }
     }
-  
+
     fetchUserData();
-  }, [userId, token, navigate]);
-  
-  useEffect(() => {
-  }, [userId]);
-  
+  }, [userData.id, token, navigate]);
+
+  // Fetch latest images on component mount and when dependencies change
   useEffect(() => {
     const fetchLatestImages = async () => {
       try {
@@ -45,118 +44,90 @@ function Flux() {
             'Authorization': token
           }
         });
-        setImages(response.data.data.images);
-        const likedImages = images.filter(img => img.latestImage && img.latestImage.likedBy.includes(userId)).map(img => img.latestImage._id);
+        const fetchedImages = response.data.data.images;
+        setImages(fetchedImages);
+
+        // Identify liked images
+        const likedImages = fetchedImages
+          .filter(img => img.latestImage && img.latestImage.likedBy.includes(userData.id))
+          .map(img => img.latestImage._id);
+
         setLikedImages(likedImages);
       } catch (error) {
         console.error('Error fetching user data:', error);
         navigate('/');
       }
     };
-  
-    fetchLatestImages();
-  }, [token, navigate, userId]);
-  
-  const setEqualImageDimensions = (event) => {
-    const targetImage = event.target;
-    const imageSize = 100; 
-    targetImage.style.width = `${imageSize}%`;
-    targetImage.style.height = `${imageSize}%`;
-  };
 
-  function handleLike(imageId) {
-    const image = images.find(img => img.latestImage && img.latestImage._id === imageId);
-    if (image && !image.latestImage.likedBy.includes(userId)) {
-      axios.post(
-        `http://localhost:3000/api/auth/images/${imageId}/like`,
-        {}, 
-        {
-          headers: {
-            'Authorization': token,
-          }
+    fetchLatestImages();
+  }, [token, navigate, userData.id]);
+
+  // Handle like/unlike functionality
+  const handleLike = async (imageId) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/auth/images/${imageId}/${likedImages.includes(imageId) ? 'unlike' : 'like'}`,
+        {},
+        { headers: { 'Authorization': token } }
+      );
+
+      // Update images and liked images state
+      const updatedImages = images.map(img => {
+        if (img.latestImage && img.latestImage._id === imageId) {
+          return {
+            ...img,
+            latestImage: {
+              ...img.latestImage,
+              likes: response.data.updatedLikes,
+              likedBy: likedImages.includes(imageId)
+                ? img.latestImage.likedBy.filter(id => id !== userData.id)
+                : [...img.latestImage.likedBy, userData.id],
+            },
+          };
         }
-      )
-        .then(response => {
-          const updatedImages = images.map(img => {
-            if (img.latestImage && img.latestImage._id === imageId) {
-              return {
-                ...img,
-                latestImage: {
-                  ...img.latestImage,
-                  likes: img.latestImage.likes + 1,
-                  likedBy: [...img.latestImage.likedBy, userId],
-                },
-              };
-            }
-            return img;
-          });
-          setImages(updatedImages);
-        })
-        .catch(error => {
-          console.error('Error liking image:', error);
-        });
+        return img;
+      });
+
+      setImages(updatedImages);
+      setLikedImages(prevLikedImages => likedImages.includes(imageId)
+        ? prevLikedImages.filter(id => id !== imageId)
+        : [...prevLikedImages, imageId]
+      );
+    } catch (error) {
+      console.error('Error liking/unliking image:', error);
     }
   }
 
+  // Toggle truncated state for image previews
   const handleReadMoreClick = () => {
     setIsTruncated(!isTruncated);
   };
 
-  const firstLetter = name ? name.charAt(0).toUpperCase() : '';
-
   return (
     <div className="d-flex justify-content-center">
-      <div className="total border border-2 ">
-        <div className="header-disp d-flex align-items-center">
-          <div className="rond"><div className="profile2">{firstLetter}</div></div>
-          <label className="fw-bold fs-4" style={{ cursor: 'pointer' }} onClick={() => navigate(`/profile/${userId}`)}>{name}</label>
-          <label className="fw-bold fs-1 font col text-end marg">Image Time</label>
-        </div>
-        {images.filter(userImage => userImage.latestImage).map((userImage) => (
-         <div key={userImage.userId} className="image-preview ">
-            <>
-              <div>
-                <p className="fw-bold fs-5">{userImage.userName}</p>
-                <p className="fw-lighter fs-6">Date: {new Date(userImage.latestImage.date).toLocaleString()}</p>
-                <div className="image-container2" >
-                  <img 
-                    className="image-container2-img"
-                    src={`http://localhost:3000${userImage.latestImage.image}`} 
-                    alt={`Image of ${userImage.userName}`} 
-                    onClick={() => setSelectedImage(userImage)}
-                    style={{ cursor: 'pointer' }} 
-                  />
-                </div>
-                {userImage.latestImage.description && (
-                  <p>{isTruncated ? userImage.latestImage.description.slice(0, 100) : userImage.latestImage.description}
-                    {userImage.latestImage.description.length > 100 && (
-                      <span onClick={handleReadMoreClick} style={{ color: 'blue', cursor: 'pointer' }}>
-                        {isTruncated ? '... Voir plus' : ' Voir moins'}
-                      </span>
-                    )}
-                  </p>
-                )}
-                <div style={{ marginLeft: '-2em', marginTop: '-1em', display: 'flex', alignItems: 'center' }}>
-                  <div>
-                    <FontAwesomeIcon
-                      icon={likedImages.includes(userImage.latestImage._id) ? solidHeart : farHeart}
-                      style={{ color: 'red', fontSize: '2em', cursor: 'pointer', marginLeft: '1em', marginTop: '20px', marginBottom: '8px'}}
-                      className="d-flex align-self-start"
-                      onClick={() => handleLike(userImage.latestImage._id)}
-                    />
-                  </div> 
-                  <p style={{ marginLeft: '0.5em', marginBottom: '0.1em', marginTop: '20px' }}>{userImage.latestImage.likes} Likes</p>
-                </div>
-              </div>
-            </>
-          </div>
-        ))}
+      <div className="width border border-2 ">
+        <FluxHeader firstLetter={userData.name ? userData.name.charAt(0).toUpperCase() : ''} name={userData.name} userId={userData.id} navigate={navigate} />
+        {/* Map and render image previews */}
+        {images
+          .filter(userImage => userImage.latestImage)
+          .map(userImage => (
+            <ImagePreview
+              key={userImage.userId}
+              userImage={userImage}
+              likedImages={likedImages}
+              isTruncated={isTruncated}
+              handleLike={handleLike}
+              handleReadMoreClick={handleReadMoreClick}
+              setSelectedImage={setSelectedImage}
+            />
+          ))}
+        {/* Render modal for selected image */}
         {selectedImage && (
           <Showing show={true} onClose={() => setSelectedImage(null)}>
             <p className="fw-bold fs-5">{selectedImage.userName}</p>
             <p className="fw-lighter fs-6">Date: {new Date(selectedImage.latestImage.date).toLocaleString()}</p>
             <div className="image-container">
-            <img className="image-container-img" src={`http://localhost:3000${selectedImage.latestImage.image}`} alt={`Image of ${selectedImage.userName}`} />
+              <img className="image-container-img" src={`http://localhost:3000${selectedImage.latestImage.image}`} alt={`Image of ${selectedImage.userName}`} style={{ cursor: 'pointer' }} />
             </div>
             <p className="fs-5">{selectedImage.latestImage.description}</p>
             <div>
@@ -167,10 +138,10 @@ function Flux() {
               />
             </div>
             <p style={{ marginLeft: '0.5em', marginBottom: '0.1em' }}>{selectedImage.latestImage.likes} Likes</p>
-            <button onClick={() => setSelectedImage(null)} className="btn btn-outline-secondary mb-5 d4">Close</button>
-         </Showing>
+            <button onClick={() => setSelectedImage(null)} style={{ float: 'right' }} className="btn btn-outline-secondary me-2 dimension">Close</button>
+          </Showing>
         )}
-     </div>
+      </div>
     </div>
   );
 }

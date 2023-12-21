@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import Adding from "../components/Adding";
-import Modal from "../components/Modal";
-import Showing from "../components/Showing";
+import { fetchUserData, fetchImages, fetchUser } from './profileUtils';
+import { ImageList, ImageViewer, ProfileHeader } from './';
 
 function Profile() {
+    // Retrieve user ID from route parameters
     const { id } = useParams();
     const navigate = useNavigate();
     const [name, setName] = useState('');
@@ -16,63 +16,30 @@ function Profile() {
     const [isEditing, setIsEditing] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [tempName, setTempName] = useState('');
+    const [editingDescription, setEditingDescription] = useState('');
+    const [isEditingDescription, setIsEditingDescription] = useState(false);
+    
+    // Fetch user data on component mount, and when ID or token changes
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3000/api/auth/profile/${id}`, {
-                    headers: {
-                        'Authorization': token
-                    }
-                });
-                setName(response.data.data.name);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-                navigate('/');
-            }
-        };
-        fetchUserData();
-    }, [id, token, navigate]);
+        fetchUserData(id, token, setName, setTempName, navigate);
+    }, [id, token, navigate, setName, setTempName]);
 
-    const handleLogout = async () => {
-        try {
-            await axios.post('/logout', {}, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-                }
-            });
-            localStorage.removeItem('authToken');
-            navigate('/');
-        } catch (error) {
-            console.error('Error during logout:', error);
-        }
-    };
-
+    // Fetch user images on component mount, and when token changes
     useEffect(() => {
-        axios.get('http://localhost:3000/api/auth/images', {
-            headers: {
-                'Authorization': token,
-            },
-        })
-        .then(response => {
-            setImages(response.data.data.images);
-        })
-        .catch(error => {
-            console.error('Error fetching images:', error);
-        });
-    }, [token]);
+        fetchImages(token, setImages);
+    }, [token, setImages]);
 
+    // Fetch user avatar on component mount, and when token changes
+    useEffect(() => {
+        fetchUser(token, setAvatar);
+    }, [token, setAvatar]);
+
+    // Function to set equal dimensions for the selected image
     const setEqualImageDimensions = (event) => {
         const targetImage = event.target;
         const imageSize = 100;
         targetImage.style.width = `${imageSize}%`;
         targetImage.style.height = `${imageSize}%`;
-    };
-
-    const setEqualImageDimensions2 = (event) => {
-        const targetImage = event.target;
-        const imageSize = 400;
-        targetImage.style.width = `${imageSize}px`;
-        targetImage.style.height = `auto`;
     };
 
     const handleUploadAvatar = async (event) => {
@@ -93,138 +60,142 @@ function Profile() {
         }
     };
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get('http://localhost:3000/api/auth/get-user', {
+    const handleNameChange = (event) => {
+        setTempName(event.target.value);
+    };
+
+    const handleSave = async () => {
+        try {
+            const response = await axios.post(
+                'http://localhost:3000/api/auth/update-name',
+                { name: tempName }, 
+                {
+                    headers: {
+                       'Content-Type': 'application/json',
+                       'Authorization': token,
+                    },
+                }
+            );
+            setName(response.data.name);
+        } catch (error) {
+            console.error('Error during name update:', error);
+        }
+    };
+
+    const handleDeleteImage = async (imageId) => {
+        try {
+                await axios.delete(`http://localhost:3000/api/auth/delete-image/${imageId}`, {
                     headers: {
                         'Authorization': token,
                     },
                 });
-                setAvatar(response.data.data.avatar);
+                setImages(images.filter((image) => image._id !== imageId));
+                setSelectedImage(null);
             } catch (error) {
-                console.error('Error fetching user:', error);
+                console.error('Error deleting image:', error);
             }
-        };
-        fetchUser();
-    }, [token]);
+    };
+    
+    // Function to close the modal
+    const handleClose = () => {
+        setShowModal(false);
+    };
 
-const handleNameChange = (event) => {
-    setTempName(event.target.value);
-};
-
-const handleSave = async () => {
-    try {
-        const response = await axios.post(
-            'http://localhost:3000/api/auth/update-name',
-            { name: tempName }, 
-            {
+    const handleEditDescription = () => {
+        const imageDescription = selectedImage.description || ''; 
+        setEditingDescription(imageDescription);
+        setIsEditingDescription(true);
+    };
+    
+    const handleSaveDescription = async () => {
+        try {
+            await axios.post(`http://localhost:3000/api/auth/update-description/${selectedImage._id}`, {
+                description: editingDescription
+            }, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': token,
                 },
-            }
-        );
-        setName(response.data.name);
-    } catch (error) {
-        console.error('Erreur lors de la mise à jour du nom:', error);
-    }
-};
-  
-    const handleDeleteImage = async (imageId) => {
-        try {
-          await axios.delete(`http://localhost:3000/api/auth/delete-image/${imageId}`, {
-            headers: {
-              'Authorization': token,
-            },
-          });
-          setImages(images.filter((image) => image._id !== imageId));
-          setSelectedImage(null);
+            });
+            setSelectedImage(prevImage => ({
+                ...prevImage,
+                description: editingDescription,
+            }));
+
+            setIsEditingDescription(false);
         } catch (error) {
-          console.error('Error deleting image:', error);
+            console.error('Error updating the description:', error);
         }
-      };
-    
-      const handleClose = () => {
+    };
+
+    const handleCancelEditDescription = () => {
+        setEditingDescription('');
+        setIsEditingDescription(false);
+    };
+
+    const handleCloseAndResetEditing = () => {
         setShowModal(false);
-      }
+        setIsEditing(false);
+    };
+      
+    const handleLogout = async () => {
+        try {
+            await axios.post('/logout', {}, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+            localStorage.removeItem('authToken');
+            navigate('/');
+        } catch (error) {
+            console.error('Error during logout:', error);
+        }
+    };
+
     return (
         <div className="d-flex justify-content-center  vh-100">
-            <div className="total border border-2 ">
-                <div className="divd">
-                    <button type="edit" className="btn btn-outline-primary ms-2 mt-1" onClick={() => navigate('/flux')}>Flux</button>
-                    <button type="edit" className="btn btn-outline-danger me-2 mt-1" onClick={handleLogout}>Logout</button>
-                </div>      
-                <div className="header-disp">
-                    <div className="d-flex profile">
-                        {avatar && <img src={avatar} alt="" style={{borderRadius: '50%', width: '100%', height: 'auto', objectFit: 'cover'}} />}
-                    </div>
-                    <label className="fw-bold fs-1">{name}</label>
-                    <div className="divd d-flex col justify-content-end pe-4 pb-2">
-                        {!isEditing && (
-                            <button onClick={() => setShowModal(true)}className="btn btn-outline-success d2">Add a new image</button>
-                        )}
-                        <div></div>
-                        <Modal show={showModal} onClose={() => setShowModal(false)}>
-                            <Adding />
-                            <div className="d5">
-                                <button onClick={handleClose} className="btn btn-outline-secondary mt-5 d5">Close</button>
-                            </div>
-                            
-                        </Modal>
-                        {!isEditing && (
-                            <button
-                                className="btn btn-outline-warning d2"
-                                onClick={() => {
-                                    setIsEditing(true);
-                                }}
-                            >Edit profile</button>
-                        )}
-                        {isEditing && (
-                            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', maxWidth: '300px', margin: 'auto' }}>
-                                <label style={{ marginBottom: '10px' }}>
-                                    Nom :
-                                    <input type="text" value={tempName} onChange={handleNameChange} style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-                                </label>
-                                <label style={{ marginBottom: '10px' }}>
-                                    Avatar :
-                                    <input type="file" onChange={handleUploadAvatar} />
-                                </label>
-                                <button  style={{ padding: '10px', borderRadius: '5px', border: 'none', backgroundColor: '#007BFF', color: 'white', cursor: 'pointer' }}>Save</button>
-                            </form>
-                        )}
-                    </div>  
-                </div>
-                <div className="imgs2 ">
-                    {images.slice().reverse().map((image) => (
-                        <div key={image?._id} className="img2 image-preview2" onClick={() => setSelectedImage(image)}>
-                            {image && image.image ? (
-                            <img onLoad={setEqualImageDimensions} src={`http://localhost:3000${image.image}`} alt={`Image ${image?._id}`} />
-                            ) : (
-                            <p>Image data is missing or empty</p>
-                            )}
-                        </div>
-                    ))}
-                </div>
+            <div className="width border border-2 ">   
+                <ProfileHeader
+                    navigate={navigate}
+                    handleLogout={handleLogout}
+                    avatar={avatar}
+                    name={name}
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                    showModal={showModal}
+                    setShowModal={setShowModal}
+                    handleClose={handleClose}
+                    handleSave={handleSave}
+                    tempName={tempName}
+                    handleNameChange={handleNameChange}
+                    handleUploadAvatar={handleUploadAvatar}
+                    handleCloseAndResetEditing={handleCloseAndResetEditing}
+                />
+                <ImageList
+                    images={images}
+                    setSelectedImage={setSelectedImage}
+                    setEqualImageDimensions={setEqualImageDimensions}
+                    handleEditDescription={handleEditDescription}
+                    handleDeleteImage={handleDeleteImage}
+                    isEditingDescription={isEditingDescription}
+                    editingDescription={editingDescription}
+                />
                 {selectedImage && (
-                    <Showing show={true} onClose={() => setSelectedImage(null)} userImage={selectedImage}>
-                        <div>
-                            <div className="image-container" >
-                                <img className="image-container-img"  src={`http://localhost:3000${selectedImage.image}`} alt={`Image of ${selectedImage._id}`}/>
-                            </div>
-                            <div className="pt-5">
-                                <p >{selectedImage.description}</p>
-                            </div>
-                        </div>
-                        <div className="pt-5">
-                            <button onClick={() => handleDeleteImage(selectedImage._id)} className="btn btn-outline-danger d3">Delete</button>
-                            <button onClick={() => setSelectedImage(null)} className="btn btn-outline-secondary me-2 d3">Close</button>
-                        </div>
-                    </Showing>
+                    <ImageViewer
+                        selectedImage={selectedImage}
+                        setSelectedImage={setSelectedImage}
+                        handleEditDescription={handleEditDescription}
+                        handleSaveDescription={handleSaveDescription}
+                        handleCancelEditDescription={handleCancelEditDescription}
+                        editingDescription={editingDescription}
+                        setEditingDescription={setEditingDescription}
+                        handleDeleteImage={handleDeleteImage}
+                        isEditingDescription={isEditingDescription}
+                    />
                 )}
             </div>     
         </div>  
     );
-}
+};
 export default Profile;
 

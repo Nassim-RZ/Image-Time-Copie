@@ -44,8 +44,6 @@ app.post('/logout', (req, res) => {
     res.json({ message: 'Logout successful' });
 });
 
-
-
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true })
     .then(() => {
         console.log('Connected successfully');

@@ -23,6 +23,7 @@ function Register() {
     const [gender, setGender] = useState('');
     const [error, setError] = useState('');
 
+    // Handle input changes in the form
     const handleChange = e => {
         const { name, value } = e.target;
         switch (name) {
@@ -56,13 +57,14 @@ function Register() {
         setError(''); 
       };
 
+      // Handle form submission
       const onSubmit = e => {
         e.preventDefault();
         if (password !== confirmPassword) {
           setError('Passwords do not match');
           return;
         }
-        
+        // Prepare data for registration
         let data = {
           name,
           email,
@@ -74,13 +76,18 @@ function Register() {
           },
           gender,
         };
+        // Send registration request
         axios.post('/api/auth/register', data)
         .then(res => {
           Auth.login(res.data);
           navigate('/flux'); 
         })
         .catch(err => {
-          setError(err.response.data.message);
+          if (err.response.data.message === 'Email already exists') {
+            setError('Email already exists');
+          } else {
+            setError(err.response.data.message);
+          }
         });        
       }
 
@@ -92,11 +99,11 @@ function Register() {
               <label className="fw-bold fs-4 stacked-labels">Create a new account</label>
             </div>
                 <form className="m-3 border border-2 rounded p-3 clr-in " onSubmit={onSubmit}>
-                    {error && (
-                      <div className="alert alert-danger" role="alert">
-                        {error}
-                      </div>
-                    )}
+                {error && (
+          <div className="alert alert-danger" role="alert">
+            Email already exists
+          </div>
+        )}
                     <div className="mb-3 input-group">
                         <span className="input-group-text">
                             <FontAwesomeIcon icon={faUser} style={{ color: '#3053df' }} />
@@ -147,7 +154,7 @@ function Register() {
                         </div>
                     </div>
                     <button type="submit" className="btn btn-success p-auto ">Create</button>
-                    <p className="pt-4"><a className="link-opacity-25-hover" href="/login">Already have an account?</a></p>
+                    <p className="pt-4"><a className="link-opacity-25-hover" href="/">Already have an account?</a></p>
                 </form>
             </div>
         </div>

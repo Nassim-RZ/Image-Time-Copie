@@ -57,14 +57,12 @@
 }
 
 
-.total{
+.width{
   width: 900px;
 }
-.total2{
+
+.width2{
   width: 60%;
-}
-.total3{
-  width: 90%;
 }
 
 .image-container {
@@ -142,7 +140,7 @@
   color: red;
 }
 
-.rond {
+.circle {
   width: 40px; 
   height: 40px;
   background-color: #1b191a; 
@@ -150,7 +148,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 .m {
@@ -209,24 +207,6 @@
   object-fit: cover;
 }
 
-.imgF {
-  background-color: #495057;
-  width: 80%;
-  height: 500px;
-  margin: 11px;
-}
-
-.App-header {
-  background-color: var(--p-color);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
 .custom-file-upload {
   padding: 10px;
   border: 1px solid #ccc;
@@ -247,34 +227,23 @@
   border-radius: 7px;
 }
 
-.divd {
+.divDisp {
   display: flex;
   background-color: var(--p-color);
   justify-content: space-between;
 }
 
-.d1 {
-  margin-top: 1%;
-  margin-left: 85%;
-}
-
-.d2 {
+.marginL {
   margin-left: 10%;
 }
 
-.d3 {
+.dimension {
   margin-left: 2%;
   width: 70px;
   height: 50px;
 }
 
-.d4 {
-  width: 70px;
-  height: 50px;
-  
-}
-
-.d5 {
+.displayHeader {
   display: flex;
   justify-content: end;
   width: 70px;
@@ -285,8 +254,11 @@
   margin-right: 40%;
 }
 
-.App-link {
-  color: #61dafb;
+.edit-form-container {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px; 
 }
 
 @keyframes App-logo-spin {
