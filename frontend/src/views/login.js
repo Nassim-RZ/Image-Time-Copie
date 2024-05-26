@@ -6,6 +6,7 @@ import { faLock } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import Auth from '../Auth';
 import { useNavigate } from 'react-router-dom';
+const backendUrl = process.env.REACT_APP_MONGODB_URL
 
 function Login() {
 
@@ -37,7 +38,7 @@ function Login() {
         email,
         password,
       };
-      axios.post('/api/auth', data)
+      axios.post(`${backendUrl}/api/auth`, data)
        .then(res => {
           const { accessToken } = res.data.data;
           const id  = res.data.data.id;
