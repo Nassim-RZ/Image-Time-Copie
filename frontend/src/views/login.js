@@ -40,28 +40,24 @@ function Login() {
       };
       axios.post('https://image-time-server.onrender.com/api/auth', data)
       .then(res => {
-        console.log('Response:', res); // Ajoutez cette ligne pour inspecter la réponse
-          const { accessToken } = res.data.data;
-          const id  = res.data.data.id;
-          if (accessToken) {
-            localStorage.setItem('authToken', accessToken);
-            Auth.login(res.data);
-            // navigate('/flux');
-            console.log('Response:', res);
-          } else {
-            console.error("Structure de réponse invalide :", res.data);
-    }
-  })
-  .catch(err => {
-    console.error('Error:', err); // Inspectez l'erreur
-    if (err.response) {
-      console.error('Error response:', err.response); // Inspectez la réponse d'erreur
-      setError(err.response.data.message); 
-    } else {
-      setError('Une erreur s\'est produite'); 
-    }
-  });    
-      }
+        if (res.data && res.data.data && res.data.data.accessToken) {
+          const { accessToken, id } = res.data.data;
+          localStorage.setItem('authToken', accessToken);
+          Auth.login(res.data);
+          navigate('/flux');
+        } else {
+          showError('Une erreur s\'est produite lors de l\'authentification.'); // Fonction pour afficher un message d'erreur à l'utilisateur
+        }
+      })
+      .catch(err => {
+        if (err.response) {
+          showError(err.response.data?.message || 'Une erreur s\'est produite'); // Afficher le message d'erreur renvoyé par le serveur
+        } else {
+          showError('Une erreur s\'est produite'); // Afficher un message d'erreur générique
+        }
+      });
+    };
+
 
       // Function to navigate to the registration page
       const navigateToRegister = () => {
