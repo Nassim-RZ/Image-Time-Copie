@@ -40,19 +40,20 @@ function Login() {
       };
       axios.post('https://image-time-backend.onrender.com/api/auth', data)
        .then(res => {
-          const { accessToken } = res.data.data;
-          const id  = res.data.data.id;
-          if (accessToken) {
-            localStorage.setItem('authToken', accessToken);
-            Auth.login(res.data);
-            navigate('/flux');
-          } else {
-            console.error("Structure de réponse invalide :", res.data);
-          } 
-        })
-        .catch(err => {
-          setError(err.response.data.message); 
-        });        
+    console.log('Response:', res); // Ajoutez cette ligne pour inspecter la réponse
+    const { accessToken, id } = res.data.data || {};
+    if (accessToken) {
+      localStorage.setItem('authToken', accessToken);
+      Auth.login(res.data);
+      navigate('/flux');
+    } else {
+      console.error("Structure de réponse invalide :", res.data);
+    }
+  })
+  .catch(err => {
+    console.error('Error:', err); // Ajoutez cette ligne pour inspecter l'erreur
+    setError(err.response?.data?.message || 'Une erreur s\'est produite'); 
+  });      
       }
 
       // Function to navigate to the registration page
