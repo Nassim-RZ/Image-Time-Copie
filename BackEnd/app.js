@@ -19,10 +19,10 @@ app.use(express.json());
 
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/api/auth', require('./routes/auth'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('https://image-time.onrender.com/', indexRouter);
+app.use('https://image-time.onrender.com/users', usersRouter);
+app.use('https://image-time.onrender.com/api/auth', require('./routes/auth'));
+app.use('https://image-time.onrender.com/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use((err, req, res, next) => {
     if(req.get('accept').includes('json')){
