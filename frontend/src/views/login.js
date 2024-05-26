@@ -38,19 +38,10 @@ function Login() {
         email,
         password,
       };
-<<<<<<< HEAD
       axios.post('https://image-time-backend.onrender.com/api/auth', data)
       .then(res => {
         console.log('Response:', res); // Ajoutez cette ligne pour inspecter la réponse
           const { accessToken } = res.data.data;
-=======
-
-axios.post('https://image-time-backend.onrender.com/api/auth', data)
-  .then(res => {
-    console.log('Response:', res); // Inspectez la réponse
-    if (res.data && res.data) {
-      const { accessToken } = res.data.data;
->>>>>>> ad4e94775bdea742b63c4fe03a7ab784805520b1
           const id  = res.data.data.id;
           if (accessToken) {
             localStorage.setItem('authToken', accessToken);
