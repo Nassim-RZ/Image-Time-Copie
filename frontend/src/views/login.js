@@ -39,29 +39,22 @@ function Login() {
         password,
       };
       axios.post('https://image-time-server.onrender.com/api/auth', data)
-      .then(res => {
-        if (res.data && res.data.data && res.data.data.accessToken) {
-          const { accessToken, id } = res.data.data;
-          localStorage.setItem('authToken', accessToken);
-          Auth.login(res.data);
-          navigate('/flux');
-        } else {
-          showError('Une erreur s\'est produite lors de l\'authentification.'); // Fonction pour afficher un message d'erreur à l'utilisateur
-        }
-      })
-      .catch(err => {
-        if (err.response) {
-          showError('une errrrrrreur' + err.response.data?.message || 'Une erreur s\'est produite'); // Afficher le message d'erreur renvoyé par le serveur
-        } else {
-          showError('Une erreur s\'est produite'); // Afficher un message d'erreur générique
-        }
-      });
-    };
-function showError(message) {
-  // Code pour afficher le message d'erreur à l'utilisateur dans l'interface graphique
-  alert(message); // Exemple d'utilisation d'alert, remplacez par votre méthode préférée
-}
-
+     .then(res => {
+          const { accessToken } = res.data.data;
+          const id  = res.data.data.id;
+          if (accessToken) {
+            localStorage.setItem('authToken', accessToken);
+            Auth.login(res.data);
+            navigate('/flux');
+          } else {
+            console.error("Structure de réponse invalide :", res.data);
+          } 
+        })
+        .catch(err => {
+          setError(err.response.data.message); 
+        });        
+      };
+    
       // Function to navigate to the registration page
       const navigateToRegister = () => {
         navigate('/register');
