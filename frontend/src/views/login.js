@@ -43,16 +43,15 @@ axios.post('https://image-time-backend.onrender.com/api/auth', data)
   .then(res => {
     console.log('Response:', res); // Inspectez la réponse
     if (res.data && res.data) {
-      const { accessToken, id } = res.data;
-      if (accessToken) {
-        localStorage.setItem('authToken', accessToken);
-        Auth.login(res.data);
-        navigate('/flux');
-      } else {
-        console.error("Structure de réponse invalide :", res.data);
-      }
-    } else {
-      console.error("Structure de réponse invalide :", res.data);
+      const { accessToken } = res.data.data;
+          const id  = res.data.data.id;
+          if (accessToken) {
+            localStorage.setItem('authToken', accessToken);
+            Auth.login(res.data);
+            // navigate('/flux');
+            console.log('Response:', res);
+          } else {
+            console.error("Structure de réponse invalide :", res.data);
     }
   })
   .catch(err => {
