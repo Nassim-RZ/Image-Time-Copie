@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://image-time.onrender.com/' // Remplacez par votre domaine
+    origin: 'https://image-time.onrender.com/'
 }));
 
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
