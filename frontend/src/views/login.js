@@ -34,16 +34,16 @@ function Login() {
     // Function to handle form submission 
     const onSubmit = e => {
       e.preventDefault();
-      const data = {
-  email: 'nassim@gmail.com', // Remplacez par l'email de l'utilisateur
-  password: '123456'   // Remplacez par le mot de passe de l'utilisateur
-};
+      let data = {
+        email,
+        password,
+      };
 
 axios.post('https://image-time-backend.onrender.com/api/auth', data)
   .then(res => {
     console.log('Response:', res); // Inspectez la réponse
-    if (res.data && res.data.data) {
-      const { accessToken, id } = res.data.data;
+    if (res.data && res.data) {
+      const { accessToken, id } = res.data;
       if (accessToken) {
         localStorage.setItem('authToken', accessToken);
         Auth.login(res.data);
