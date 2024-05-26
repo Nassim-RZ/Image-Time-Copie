@@ -37,14 +37,16 @@ function Login() {
         email,
         password,
       };
-      axios.post('/api/auth', data)
-       .then(res => {
+      axios.post('https://image-time-backend.onrender.com/api/auth', data)
+      .then(res => {
+        console.log('Response:', res); // Ajoutez cette ligne pour inspecter la réponse
           const { accessToken } = res.data.data;
           const id  = res.data.data.id;
           if (accessToken) {
             localStorage.setItem('authToken', accessToken);
             Auth.login(res.data);
-            navigate('/flux');
+            // navigate('/flux');
+            console.log('Response:', res);
           } else {
             console.error("Structure de réponse invalide :", res.data);
           } 
