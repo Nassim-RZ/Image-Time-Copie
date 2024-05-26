@@ -57,7 +57,10 @@ function Login() {
         }
       });
     };
-
+function showError(message) {
+  // Code pour afficher le message d'erreur à l'utilisateur dans l'interface graphique
+  alert(message); // Exemple d'utilisation d'alert, remplacez par votre méthode préférée
+}
 
       // Function to navigate to the registration page
       const navigateToRegister = () => {
