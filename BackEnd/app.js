@@ -25,7 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/api/auth', require('./routes/auth'));
+app.use('https://image-time-server.onrender.com/api/auth', require('./routes/auth'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use((err, req, res, next) => {
