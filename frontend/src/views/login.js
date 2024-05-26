@@ -38,7 +38,7 @@ function Login() {
         email,
         password,
       };
-      axios.post('https://image-time-backend.onrender.com/api/auth', data)
+      axios.post('https://image-time-server.onrender.com/api/auth', data)
       .then(res => {
         console.log('Response:', res); // Ajoutez cette ligne pour inspecter la réponse
           const { accessToken } = res.data.data;
