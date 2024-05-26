@@ -50,7 +50,7 @@ app.post('/logout', (req, res) => {
 
 mongoose.connect(process.env.DB_URL, { useNewUrlParser: true })
     .then(() => {
-        console.log('Connected successfully');
+        console.log('Connected successfully to db');
     })
     .catch(err => {
         console.error('Connection error:', err.message);
