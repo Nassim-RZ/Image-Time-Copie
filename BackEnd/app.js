@@ -17,15 +17,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-app.use(cors({
-    origin: 'https://image-time.onrender.com/'
-}));
-
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('https://image-time-server.onrender.com/api/auth', require('./routes/auth'));
+app.use('/api/auth', require('./routes/auth'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use((err, req, res, next) => {
