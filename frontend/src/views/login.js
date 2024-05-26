@@ -39,7 +39,7 @@ function Login() {
   password: '123456'   // Remplacez par le mot de passe de l'utilisateur
 };
 
-axios.post('https://image-time-backend.onrender.com/api/auth', data)
+axios.post('https://image-time-backend.onrender.com/api/auth', data { email, password })
   .then(res => {
     console.log('Response:', res); // Inspectez la réponse
     if (res.data && res.data.data) {
