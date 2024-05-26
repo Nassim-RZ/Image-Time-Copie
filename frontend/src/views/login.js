@@ -34,26 +34,36 @@ function Login() {
     // Function to handle form submission
     const onSubmit = e => {
       e.preventDefault();
-      let data = {
-        email,
-        password,
-      };
-      axios.post('https://image-time-backend.onrender.com/api/auth', data)
-       .then(res => {
-    console.log('Response:', res); // Ajoutez cette ligne pour inspecter la réponse
-    const { accessToken, id } = res.data.data || {};
-    if (accessToken) {
-      localStorage.setItem('authToken', accessToken);
-      Auth.login(res.data);
-      navigate('/flux');
+      const data = {
+  email: 'nassim@gmail.com', // Remplacez par l'email de l'utilisateur
+  password: '123456'   // Remplacez par le mot de passe de l'utilisateur
+};
+
+axios.post('https://image-time-backend.onrender.com/api/auth', data)
+  .then(res => {
+    console.log('Response:', res); // Inspectez la réponse
+    if (res.data && res.data.data) {
+      const { accessToken, id } = res.data.data;
+      if (accessToken) {
+        localStorage.setItem('authToken', accessToken);
+        Auth.login(res.data);
+        navigate('/flux');
+      } else {
+        console.error("Structure de réponse invalide :", res.data);
+      }
     } else {
       console.error("Structure de réponse invalide :", res.data);
     }
   })
   .catch(err => {
-    console.error('Error:', err); // Ajoutez cette ligne pour inspecter l'erreur
-    setError(err.response?.data?.message || 'Une erreur s\'est produite'); 
-  });      
+    console.error('Error:', err); // Inspectez l'erreur
+    if (err.response) {
+      console.error('Error response:', err.response); // Inspectez la réponse d'erreur
+      setError(err.response.data.message); 
+    } else {
+      setError('Une erreur s\'est produite'); 
+    }
+  });    
       }
 
       // Function to navigate to the registration page
