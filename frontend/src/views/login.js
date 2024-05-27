@@ -40,22 +40,23 @@ function Login() {
       };
       axios.post('https://image-time-server.onrender.com/api/auth', data)
       .then(res => {
-        if (res.data && res.data.data && res.data.data.accessToken) {
-          const { accessToken, id } = res.data.data;
+        console.log("yoo1")
+        const { accessToken } = res.data.data;
+        const id  = res.data.data.id;
+        if (accessToken) {
+            console.log("yoo2")
           localStorage.setItem('authToken', accessToken);
           Auth.login(res.data);
           navigate('/flux');
         } else {
-          showError('Une erreur s\'est produite lors de l\'authentification.'); // Fonction pour afficher un message d'erreur à l'utilisateur
-        }
+            console.log("yoo3")
+          console.error("Structure de réponse invalide :", res.data);
+        } 
       })
       .catch(err => {
-        if (err.response) {
-          showError(err.response.data?.message || 'Une erreur s\'est produite'); // Afficher le message d'erreur renvoyé par le serveur
-        } else {
-          showError('Une erreur s\'est produite'); // Afficher un message d'erreur générique
-        }
-      });
+          console.log("yoo4")
+        setError(err.response.data.message); 
+      });        
     };
 
 
