@@ -19,5 +19,5 @@
     "morgan": "~1.9.1",
     "multer": "^1.4.5-lts.1"
   },
-  "proxy": "https://image-time.onrender.com/"
+  "proxy": "https://image-time-server.onrender.com/"
 }
