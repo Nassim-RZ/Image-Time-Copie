@@ -26,10 +26,10 @@ router.use('/uploads', express.static(path.join(__dirname, '../public/uploads'))
 // Authentication routes
 router.post('/register', authController.register);
 
-router.post('https://image-time.onrender.com/', authController.login);
+router.post('/', authController.login);
 
 // Image and avatar related routes
-router.get('https://image-time.onrender.com/flux', imageController.getLatestImages);
+router.get('/flux', imageController.getLatestImages);
 
 router.post('/upload-avatar', [verifyToken.verify, upload.single('avatar')],authController.uploadAvatar);
 
@@ -43,7 +43,7 @@ router.post('/images/:imageId/like', verifyToken.verify, imageController.likeIma
 
 router.post('/images/:imageId/unlike', verifyToken.verify, imageController.unlikeImage);
 
-router.get('https://image-time.onrender.com/get-user', verifyToken.verify, authController.getUser);
+router.get('/get-user', verifyToken.verify, authController.getUser);
 
 router.post('/update-name', verifyToken.verify, authController.updateName);
 
