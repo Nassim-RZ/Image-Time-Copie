@@ -40,17 +40,21 @@ function Login() {
       };
       axios.post('/api/auth', data)
      .then(res => {
+          conole.log("yoo1")
           const { accessToken } = res.data.data;
           const id  = res.data.data.id;
           if (accessToken) {
+              conole.log("yoo2")
             localStorage.setItem('authToken', accessToken);
             Auth.login(res.data);
             navigate('/flux');
           } else {
+              conole.log("yoo3")
             console.error("Structure de réponse invalide :", res.data);
           } 
         })
         .catch(err => {
+            conole.log("yoo4")
           setError(err.response.data.message); 
         });        
       };
